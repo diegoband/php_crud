@@ -7,7 +7,7 @@ require_once("./db/Conection.php");
 if ($_SERVER["REQUEST_METHOD"] === "GET") {
 
   try {
-    $sSql = "SELECT * from pessoas";
+    $sSql = "SELECT p.*, e.nome nome_estado FROM `pessoas` p LEFT JOIN estado e ON e.id = p.state_id;";
     $stmt = $oConection->prepare($sSql);
     $stmt->execute();
     $aUsers = $stmt->fetchAll();
@@ -34,20 +34,20 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
 <body>
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">DADOS PESSOAIS</a>
+      <a class="navbar-brand" href="/">DADOS PESSOAIS</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#">Home</a>
+            <a class="nav-link active" aria-current="page" href="./index.php">Home</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Dados das pessoas</a>
+            <a class="nav-link" href="./app/Create.php">Criar</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Editar</a>
+            <a class="nav-link" href="./app/Edit.php">Editar</a>
           </li>
         </ul>
       </div>
@@ -90,6 +90,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
           <th scope="col">Endereço</th>
           <th scope="col">Numero casa</th>
           <th scope="col">Cidade</th>
+          <th scope="col">Estado</th>
           <th scope="col">Cep</th>
           <th scope="col">Ações</th>
         </tr>
@@ -111,6 +112,9 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
             </td>
             <td>
               <?= $oUser->city; ?>
+            </td>
+            <td>
+              <?= $oUser->nome_estado; ?>
             </td>
             <td>
               <?= $oUser->cep; ?>

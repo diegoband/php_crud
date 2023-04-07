@@ -4,6 +4,16 @@ session_start();
 
 require_once("../db/Conection.php");
 
+
+try {
+  $sSql = "SELECT * from estado";
+  $stmt = $oConection->prepare($sSql);
+  $stmt->execute();
+  $estados = $stmt->fetchAll();
+} catch (\PDOException $e) {
+  $_SESSION["error"] = "NAO EXISTE DADOS NO GET " . $e->getMessage();
+}
+
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
   $sName = isset($_POST["name"]) ? $_POST["name"] : "";
   $sEmail = isset($_POST["email"]) ? $_POST["email"] : "";
@@ -12,7 +22,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
   $sAddress = isset($_POST["address"]) ? $_POST["address"] : "";
   $sNumberHouse = isset($_POST["numberHouse"]) ? $_POST["numberHouse"] : "";
   $sCity = isset($_POST["city"]) ? $_POST["city"] : "";
-  $sState = isset($_POST["state"]) ? $_POST["state"] : "";
+  $iState = isset($_POST["state_id"]) ? $_POST["state_id"] : "";
   $sCep = isset($_POST["cep"]) ? $_POST["cep"] : "";
 
   if (empty($sName) || empty($sEmail) || empty($sPassword)) {
@@ -30,7 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
   $sConfirmPassword = md5($sConfirmPassword);
 
   try {
-    $sSql = "INSERT INTO pessoas (nome, email, password, confirm_password, address, number_house, city, state, cep) VALUES (?,?,?,?,?,?,?,?,?)";
+    $sSql = "INSERT INTO pessoas (nome, email, password, confirm_password, address, number_house, city, state_id, cep) VALUES (?,?,?,?,?,?,?,?,?)";
     $stmt = $oConection->prepare($sSql);
     $stmt->execute([
       $sName,
@@ -40,7 +50,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       $sAddress,
       $sNumberHouse,
       $sCity,
-      $sState,
+      $iState,
       $sCep
     ]);
 
@@ -127,11 +137,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       </div>
       <div class="col-md-4">
         <label for="inputState" class="form-label">Estado</label>
-        <select id="inputState" class="form-select" name="state">
-          <option selected>Escolha...</option>
-          <option value="MA">MA</option>
-          <option value="PI">PI</option>
-          <option value="SP">SP</option>
+        <select id="inputState" class="form-select" name="state_id">
+          <?php foreach ($estados as $estado) : ?>
+            <option value="<?= $estado->id ?>"><?= $estado->nome . " - " . $estado->uf; ?></option>
+          <?php endforeach; ?>
         </select>
       </div>
       <div class="col-6">

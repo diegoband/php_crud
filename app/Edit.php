@@ -4,6 +4,15 @@ session_start();
 
 require_once("../db/Conection.php");
 
+try {
+  $sSql = "SELECT estado.id, estado.nome, estado.uf FROM estado";
+  $stmt = $oConection->prepare($sSql);
+  $stmt->execute();
+  $estados = $stmt->fetchAll();
+} catch (\PDOException $e) {
+  $_SESSION["error"] = "NAO EXISTE DADOS NO GET " . $e->getMessage();
+}
+
 $dados = $_POST;
 
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
@@ -35,12 +44,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $address = $dados["address"];
   $number_house = $dados["number_house"];
   $city = $dados["city"];
-  $state = $dados["state"];
+  $state = $dados["state_id"];
   $cep = $dados["cep"];
   $id = $dados["id"];
 
 
-  $sSql = "UPDATE pessoas SET nome = :name, email = :email, address = :address, number_house = :number_house, city = :city, state = :state, cep = :cep WHERE id = :id";
+  $sSql = "UPDATE pessoas SET nome = :name, email = :email, address = :address, number_house = :number_house, city = :city, state_id = :state, cep = :cep WHERE id = :id";
 
   $stmt = $oConection->prepare($sSql);
 
@@ -123,11 +132,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       </div>
       <div class=" col-md-4">
         <label for="inputState" class="form-label">Estado</label>
-        <select id="inputState" class="form-select" name="state" value="<?= $dados->state ?>">
-          <option>Escolha...</option>
-          <option value="MA">MA</option>
-          <option value="PI">PI</option>
-          <option value="SP">SP</option>
+        <select id="inputState" class="form-select" name="state_id">
+          <?php foreach ($estados as $estado) : ?>
+            <?php if ($dados->state_id && $dados->state_id == $estado->id) : ?>
+              <option selected value="<?= $estado->id ?>"><?= $estado->nome . " - " . $estado->uf; ?></option>
+            <?php endif; ?>
+            <option value="<?= $estado->id ?>"><?= $estado->nome . " - " . $estado->uf; ?></option>
+          <?php endforeach; ?>
         </select>
       </div>
       <div class="col-md-6">
