@@ -15,7 +15,11 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
   }
 
   try {
-    $sSql = "SELECT pessoas.*, estado.nome nome_estado FROM pessoas LEFT JOIN estado ON estado.id = pessoas.state_id WHERE pessoas.id = :id";
+    $sSql = "SELECT pessoas.*, estado.nome AS nome_estado, genero.descricao AS genero_descricao 
+    FROM pessoas 
+    LEFT JOIN estado ON estado.id = pessoas.state_id 
+    LEFT JOIN genero ON genero.id = pessoas.genero_id
+    WHERE pessoas.id = :id";
     $stmt = $oConection->prepare($sSql);
     $stmt->bindParam(":id", $id);
     $stmt->execute();
@@ -52,6 +56,8 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
       <p><?= $dados->city ?></p>
       <p class="bold">Estado pessoa:</p>
       <p><?= $dados->nome_estado ?></p>
+      <p class="bold">Genero da pessoa:</p>
+      <p><?= $dados->genero_descricao ?></p>
       <p class="bold">Cep pessoa:</p>
       <p><?= $dados->cep ?></p>
       <div class="return">

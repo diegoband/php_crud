@@ -10,6 +10,11 @@ try {
   $stmt = $oConection->prepare($sSql);
   $stmt->execute();
   $estados = $stmt->fetchAll();
+
+  $sSql = "SELECT * from genero";
+  $stmt = $oConection->prepare($sSql);
+  $stmt->execute();
+  $generos = $stmt->fetchAll();
 } catch (\PDOException $e) {
   $_SESSION["error"] = "NAO EXISTE DADOS NO GET " . $e->getMessage();
 }
@@ -23,6 +28,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
   $sNumberHouse = isset($_POST["numberHouse"]) ? $_POST["numberHouse"] : "";
   $sCity = isset($_POST["city"]) ? $_POST["city"] : "";
   $iState = isset($_POST["state_id"]) ? $_POST["state_id"] : "";
+  $iGenero = isset($_POST["genero_id"]) ? $_POST["genero_id"] : "";
   $sCep = isset($_POST["cep"]) ? $_POST["cep"] : "";
 
   if (empty($sName) || empty($sEmail) || empty($sPassword)) {
@@ -36,11 +42,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     die;
   }
 
-  $sPassword = md5($sPassword);
-  $sConfirmPassword = md5($sConfirmPassword);
+  $sPassword = password_hash($sPassword, PASSWORD_DEFAULT);
+  $sConfirmPassword = password_hash($sConfirmPassword, PASSWORD_DEFAULT);
 
   try {
-    $sSql = "INSERT INTO pessoas (nome, email, password, confirm_password, address, number_house, city, state_id, cep) VALUES (?,?,?,?,?,?,?,?,?)";
+    $sSql = "INSERT INTO pessoas (nome, email, password, confirm_password, address, number_house, city, state_id, genero_id, cep) VALUES (?,?,?,?,?,?,?,?,?,?)";
     $stmt = $oConection->prepare($sSql);
     $stmt->execute([
       $sName,
@@ -51,6 +57,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       $sNumberHouse,
       $sCity,
       $iState,
+      $iGenero,
       $sCep
     ]);
 
@@ -140,6 +147,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         <select id="inputState" class="form-select" name="state_id">
           <?php foreach ($estados as $estado) : ?>
             <option value="<?= $estado->id ?>"><?= $estado->nome . " - " . $estado->uf; ?></option>
+          <?php endforeach; ?>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <label for="inputGenero" class="form-label">Genero</label>
+        <select id="inputGenero" class="form-select" name="genero_id">
+          <option value="">Defina seu genero</option>
+          <?php foreach ($generos as $genero) : ?>
+            <option value="<?= $genero->id ?>"><?= $genero->descricao; ?></option>
           <?php endforeach; ?>
         </select>
       </div>

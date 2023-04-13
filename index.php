@@ -7,7 +7,10 @@ require_once("./db/Conection.php");
 if ($_SERVER["REQUEST_METHOD"] === "GET") {
 
   try {
-    $sSql = "SELECT p.*, e.nome nome_estado FROM `pessoas` p LEFT JOIN estado e ON e.id = p.state_id;";
+    $sSql = "SELECT p.*, e.nome AS nome_estado, genero.descricao AS genero_descricao
+      FROM pessoas p 
+      LEFT JOIN estado e ON e.id = p.state_id
+      LEFT JOIN genero ON genero.id = p.genero_id;";
     $stmt = $oConection->prepare($sSql);
     $stmt->execute();
     $aUsers = $stmt->fetchAll();
@@ -91,6 +94,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
           <th scope="col">Numero casa</th>
           <th scope="col">Cidade</th>
           <th scope="col">Estado</th>
+          <th scope="col">Genero</th>
           <th scope="col">Cep</th>
           <th scope="col">Ações</th>
         </tr>
@@ -115,6 +119,9 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
             </td>
             <td>
               <?= $oUser->nome_estado; ?>
+            </td>
+            <td>
+              <?= $oUser->genero_descricao; ?>
             </td>
             <td>
               <?= $oUser->cep; ?>

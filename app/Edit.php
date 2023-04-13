@@ -9,6 +9,11 @@ try {
   $stmt = $oConection->prepare($sSql);
   $stmt->execute();
   $estados = $stmt->fetchAll();
+
+  $sSql = "SELECT * from genero";
+  $stmt = $oConection->prepare($sSql);
+  $stmt->execute();
+  $generos = $stmt->fetchAll();
 } catch (\PDOException $e) {
   $_SESSION["error"] = "NAO EXISTE DADOS NO GET " . $e->getMessage();
 }
@@ -39,17 +44,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
   $name = $dados["name"];
   $email = $dados["email"];
-  $password = $dados["password"];
-  $confirm_password = $dados["confirm_password"];
+  $password = @$dados["password"];
+  $confirm_password = @$dados["confirm_password"];
   $address = $dados["address"];
   $number_house = $dados["number_house"];
   $city = $dados["city"];
   $state = $dados["state_id"];
+  $genero = $dados["genero_id"] ? $dados["genero_id"] : NULL;
   $cep = $dados["cep"];
   $id = $dados["id"];
 
 
-  $sSql = "UPDATE pessoas SET nome = :name, email = :email, address = :address, number_house = :number_house, city = :city, state_id = :state, cep = :cep WHERE id = :id";
+  $sSql = "UPDATE pessoas SET nome = :name, email = :email, address = :address, number_house = :number_house, city = :city, state_id = :state, genero_id = :genero_id, cep = :cep WHERE id = :id";
 
   $stmt = $oConection->prepare($sSql);
 
@@ -59,6 +65,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $stmt->bindParam(":number_house", $number_house);
   $stmt->bindParam(":city", $city);
   $stmt->bindParam(":state", $state);
+  $stmt->bindParam(":genero_id", $genero);
   $stmt->bindParam(":cep", $cep);
   $stmt->bindParam(":id", $id);
 
@@ -69,8 +76,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   } catch (\PDOException $e) {
     $_SESSION["error"] = "NAO ATUALIZOU OS DADOS " . $e->getMessage();
   }
-
-  //header("Location: ./Edit.php");
 }
 
 
@@ -136,8 +141,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           <?php foreach ($estados as $estado) : ?>
             <?php if ($dados->state_id && $dados->state_id == $estado->id) : ?>
               <option selected value="<?= $estado->id ?>"><?= $estado->nome . " - " . $estado->uf; ?></option>
+            <?php else : ?>
+              <option value="<?= $estado->id ?>"><?= $estado->nome . " - " . $estado->uf; ?></option>
             <?php endif; ?>
-            <option value="<?= $estado->id ?>"><?= $estado->nome . " - " . $estado->uf; ?></option>
+          <?php endforeach; ?>
+        </select>
+      </div>
+      <div class=" col-md-4">
+        <label for="inputState" class="form-label">Genero</label>
+        <select id="inputState" class="form-select" name="genero_id">
+          <option value="">Defina seu genero</option>
+          <?php foreach ($generos as $genero) : ?>
+            <?php if ($dados->genero_id && $dados->genero_id == $genero->id) : ?>
+              <option selected value="<?= $genero->id ?>"><?= $genero->descricao; ?></option>
+            <?php else : ?>
+              <option value="<?= $genero->id ?>"><?= $genero->descricao; ?></option>
+            <?php endif; ?>
           <?php endforeach; ?>
         </select>
       </div>
