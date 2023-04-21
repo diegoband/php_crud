@@ -1,0 +1,34 @@
+ul,
+li,
+a {
+  margin: 0;
+  box-sizing: border-box;
+  padding: 0px;
+}
+
+a {
+  text-decoration: none;
+  padding-right: 10px;
+}
+
+.container {
+  margin-top: .75rem;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.bg-image-vertical {
+  position: relative;
+  overflow: hidden;
+  background-repeat: no-repeat;
+  background-position: right center;
+  background-size: auto 100%;
+}
+
+@media (min-width: 1025px) {
+  .h-custom-2 {
+    height: calc(100%-53px);
+  }
+}

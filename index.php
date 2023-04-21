@@ -3,6 +3,11 @@ session_start();
 
 require_once("./db/Conection.php");
 
+if (!isset($_SESSION["logado"]) &&  $_SESSION["logado"] !== true) {
+  header("location: ./login.php");
+  die;
+}
+
 
 if ($_SERVER["REQUEST_METHOD"] === "GET") {
 
@@ -10,7 +15,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
     $sSql = "SELECT p.*, e.nome AS nome_estado, genero.descricao AS genero_descricao
       FROM pessoas p 
       LEFT JOIN estado e ON e.id = p.state_id
-      LEFT JOIN genero ON genero.id = p.genero_id;";
+      LEFT JOIN genero ON genero.id = p.genero_id";
     $stmt = $oConection->prepare($sSql);
     $stmt->execute();
     $aUsers = $stmt->fetchAll();
@@ -31,7 +36,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css" />
   <!-- CSS  -->
-  <link rel="stylesheet" href="./css/styles.css">
+  <link rel="stylesheet" href="public/css/styles.css">
 </head>
 
 <body>
@@ -42,15 +47,23 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav">
+        <ul class="navbar-nav ms-auto">
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="./index.php">Home</a>
+            <a class="nav-link active" aria-current="page" href="./login.php">Login</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="./app/Create.php">Criar</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="./app/Edit.php">Editar</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <?= $_SESSION["nome"] ?>
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <li><a class="dropdown-item" href="./logout.php">Logout</a></li>
+            </ul>
           </li>
         </ul>
       </div>

@@ -4,7 +4,6 @@ session_start();
 
 require_once("../db/Conection.php");
 
-
 try {
   $sSql = "SELECT * from estado";
   $stmt = $oConection->prepare($sSql);

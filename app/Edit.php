@@ -4,6 +4,13 @@ session_start();
 
 require_once("../db/Conection.php");
 
+
+if (!isset($_SESSION["logado"]) &&  $_SESSION["logado"] !== true) {
+  header("location: ./login.php");
+  die;
+}
+
+
 try {
   $sSql = "SELECT estado.id, estado.nome, estado.uf FROM estado";
   $stmt = $oConection->prepare($sSql);

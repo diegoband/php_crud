@@ -5,6 +5,13 @@ session_start();
 require_once("../db/Conection.php");
 
 
+if (!isset($_SESSION["logado"]) &&  $_SESSION["logado"] !== true) {
+  header("location: ./login.php");
+  die;
+}
+
+
+
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
 
   if (isset($_GET["id"])) {
